@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/albenik/go-serial"
+	"go.bug.st/serial"
 )
 
 func main() {
@@ -15,6 +15,9 @@ func main() {
 
 	mode := &serial.Mode{
 		BaudRate: 115200,
+		Parity:   serial.NoParity,
+		DataBits: 8,
+		StopBits: serial.OneStopBit,
 	}
 
 	portNames, err := serial.GetPortsList()
@@ -32,10 +35,12 @@ func main() {
 			port, err := serial.Open(name, mode)
 			if err != nil {
 				log.Fatal(err)
+				return
 			}
+			defer port.Close()
 
+			buff := make([]byte, 100)
 			for {
-				var buff []byte
 				n, err := port.Read(buff)
 				if err != nil {
 					log.Fatal(err)
@@ -43,7 +48,6 @@ func main() {
 				}
 
 				if n == 0 {
-					fmt.Println("\nEOF")
 					continue
 				}
 
