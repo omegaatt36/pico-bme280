@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"machine"
-	"time"
 
 	"github.com/mailru/easyjson"
 	"github.com/omegaatt36/pico-bme280/component/bme280/usecase"
@@ -25,7 +24,16 @@ func main() {
 
 	for {
 		func() {
-			defer time.Sleep(time.Second)
+			var wait string
+			n, err := fmt.Scanln(&wait)
+			if n == 0 {
+				return
+			}
+
+			if wait != "read" {
+				fmt.Println(wait)
+				return
+			}
 
 			o := bme280UseCase.Detect(&sensor)
 			if o.Err != "" {
